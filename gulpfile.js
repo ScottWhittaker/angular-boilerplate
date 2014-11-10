@@ -23,7 +23,7 @@ var del = require('del');
  */
 var DEBUG_DEST = './debug';
 
-gulp.task('debug', ['clean', 'vendor'], function () {
+gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
     var bowerFiles = gulp.src(mainBowerFiles(), {read: false});
     return gulp.src('./src/index.html')
         /*
@@ -35,6 +35,7 @@ gulp.task('debug', ['clean', 'vendor'], function () {
             <!-- endinject -->
          */
         .pipe(inject(bowerFiles, {name: 'bower'}))
+        .pipe(inject(gulp.src('./src/**/*.js')))
         .pipe(gulp.dest(DEBUG_DEST));
 });
 
@@ -65,5 +66,11 @@ gulp.task('vendor', ['clean'], function () {
     return gulp.src(mainBowerFiles(), {base: '.'})
         .pipe(gulp.dest('./debug'));
 });
+
+gulp.task('scripts', ['clean'], function () {
+    return gulp.src('./src/**/*.js')
+        .pipe(gulp.dest('./debug/src'));
+});
+
 
 gulp.task('default', ['debug']);
