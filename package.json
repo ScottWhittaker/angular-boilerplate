@@ -4,5 +4,8 @@
   "description": "angularjs and gulp boilerplate",
   "main": "index.js",
   "author": "Scott Whittaker",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.8.10"
+  }
 }
