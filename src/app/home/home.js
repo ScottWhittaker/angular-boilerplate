@@ -3,12 +3,10 @@
 
     angular
         .module('app.home')
-        .controller('home', home);
-
-    home.$inject = [''];
+        .controller('Home', Home);
 
     /* @ngInject */
-    function home() {
+    function Home() {
         console.log('home');
     }
 })();
