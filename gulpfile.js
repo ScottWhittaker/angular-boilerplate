@@ -18,13 +18,29 @@ var mainBowerFiles = require('main-bower-files');
  */
 var del = require('del');
 
+var es = require('event-stream');
+
+var concat = require('gulp-concat');
+
 /*
     The destination for debug build
  */
 var DEBUG_DEST = './debug';
 
 gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
+
     var bowerFiles = gulp.src(mainBowerFiles(), {read: false});
+
+    /*
+        Inject files from multiple source streams using event-stream merge
+        This provides us with script loading order according to our .js file naming conventions
+        i.e. we load all *.module.js files first
+        This is necessary as the module needs to execute before any files that use it
+        e.g. home.module.js
+     */
+    var moduleStream = gulp.src('./src/**/*.module.js');
+    var scriptStream = gulp.src('./src/**/!(*.module.js|app.js)');
+
     return gulp.src('./src/index.html')
         /*
             The name option passed to inject is the string used to define the placeholder in index.html where the script
@@ -35,9 +51,10 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
             <!-- endinject -->
          */
         .pipe(inject(bowerFiles, {name: 'bower'}))
-        .pipe(inject(gulp.src('./src/**/*.js')))
+        .pipe(inject(es.merge(moduleStream, scriptStream)))
         .pipe(gulp.dest(DEBUG_DEST));
 });
+
 
 gulp.task('clean', function (cb) {
     del([DEBUG_DEST], cb);
@@ -71,6 +88,7 @@ gulp.task('scripts', ['clean'], function () {
     return gulp.src('./src/**/*.js')
         .pipe(gulp.dest('./debug/src'));
 });
+
 
 
 gulp.task('default', ['debug']);
