@@ -5,8 +5,19 @@ var es = require('event-stream');
 var inject = require('gulp-inject');
 var mainBowerFiles = require('main-bower-files');
 
-// TODO define paths in object literal
-var DEBUG_DEST = './debug';
+var paths = {
+    build: {
+        dest: './debug/'
+    },
+    html: {
+        index: './src/index.html'
+    },
+    js: {
+        all: './src/**/*.js',
+        modules: './src/**/*.module.js',
+        nonModules: './src/**/!(*.module.js)'
+    }
+}
 
 gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
 
@@ -19,10 +30,10 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
         This is necessary as the module needs to execute before any files that use it
         e.g. home.module.js
      */
-    var moduleStream = gulp.src('./src/**/*.module.js');
-    var scriptStream = gulp.src('./src/**/!(*.module.js|app.js)');
+    var moduleStream = gulp.src(paths.js.modules);
+    var scriptStream = gulp.src(paths.js.nonModules);
 
-    return gulp.src('./src/index.html')
+    return gulp.src(paths.html.index)
         /*
             The name option passed to inject is the string used to define the placeholder in index.html where the script
             tags will be injected e.g.
@@ -33,12 +44,12 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
          */
         .pipe(inject(bowerFiles, {name: 'bower'}))
         .pipe(inject(es.merge(moduleStream, scriptStream)))
-        .pipe(gulp.dest(DEBUG_DEST));
+        .pipe(gulp.dest(paths.build.dest));
 });
 
 
 gulp.task('clean', function (cb) {
-    del([DEBUG_DEST], cb);
+    del([paths.build.dest], cb);
 });
 
 gulp.task('vendor', ['clean'], function () {
@@ -62,12 +73,12 @@ gulp.task('vendor', ['clean'], function () {
      */
 
     return gulp.src(mainBowerFiles(), {base: '.'})
-        .pipe(gulp.dest('./debug'));
+        .pipe(gulp.dest(paths.build.dest));
 });
 
 gulp.task('scripts', ['clean'], function () {
-    return gulp.src('./src/**/*.js')
-        .pipe(gulp.dest('./debug/src'));
+    return gulp.src(paths.js.all)
+        .pipe(gulp.dest(paths.build.dest + 'src'));
 });
 
 gulp.task('default', ['debug']);
