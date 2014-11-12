@@ -7,7 +7,7 @@ var mainBowerFiles = require('main-bower-files');
 
 var paths = {
     build: {
-        dest: './debug/'
+        debug: './build/debug/'
     },
     html: {
         index: './src/index.html'
@@ -31,7 +31,7 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
         e.g. home.module.js
      */
     var moduleStream = gulp.src(paths.js.modules);
-    var scriptStream = gulp.src(paths.js.nonModules);
+    var nonModuleStream = gulp.src(paths.js.nonModules);
 
     return gulp.src(paths.html.index)
         /*
@@ -43,13 +43,13 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
             <!-- endinject -->
          */
         .pipe(inject(bowerFiles, {name: 'vendor'}))
-        .pipe(inject(es.merge(moduleStream, scriptStream)))
-        .pipe(gulp.dest(paths.build.dest));
+        .pipe(inject(es.merge(moduleStream, nonModuleStream)))
+        .pipe(gulp.dest(paths.build.debug));
 });
 
 
 gulp.task('clean', function (cb) {
-    del([paths.build.dest], cb);
+    del([paths.build.debug], cb);
 });
 
 gulp.task('vendor', ['clean'], function () {
@@ -73,12 +73,12 @@ gulp.task('vendor', ['clean'], function () {
      */
 
     return gulp.src(mainBowerFiles(), {base: '.'})
-        .pipe(gulp.dest(paths.build.dest));
+        .pipe(gulp.dest(paths.build.debug));
 });
 
 gulp.task('scripts', ['clean'], function () {
     return gulp.src(paths.js.all)
-        .pipe(gulp.dest(paths.build.dest + 'src'));
+        .pipe(gulp.dest(paths.build.debug + 'src'));
 });
 
 gulp.task('default', ['debug']);
