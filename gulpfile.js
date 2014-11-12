@@ -1,30 +1,11 @@
-/*
-    https://github.com/gulpjs/gulp/
- */
 var gulp = require('gulp');
-
-/*
-    https://github.com/klei/gulp-inject
- */
+var concat = require('gulp-concat');
+var del = require('del');
+var es = require('event-stream');
 var inject = require('gulp-inject');
-
-/*
-    https://github.com/ck86/main-bower-files
- */
 var mainBowerFiles = require('main-bower-files');
 
-/*
-    https://github.com/sindresorhus/del
- */
-var del = require('del');
-
-var es = require('event-stream');
-
-var concat = require('gulp-concat');
-
-/*
-    The destination for debug build
- */
+// TODO define paths in object literal
 var DEBUG_DEST = './debug';
 
 gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
@@ -88,7 +69,5 @@ gulp.task('scripts', ['clean'], function () {
     return gulp.src('./src/**/*.js')
         .pipe(gulp.dest('./debug/src'));
 });
-
-
 
 gulp.task('default', ['debug']);
