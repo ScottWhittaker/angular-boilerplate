@@ -1,3 +1,6 @@
 angular.module('app', [
-    'app.home'
-]);
+    'ui.router',
+    'app.home',
+    'app.about'
+])
+;

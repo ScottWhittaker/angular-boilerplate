@@ -10,7 +10,8 @@ var paths = {
         debug: './build/debug/'
     },
     html: {
-        index: './src/index.html'
+        index: './src/index.html',
+        all: './src/**/*.html'
     },
     js: {
         all: './src/**/*.js',
@@ -19,7 +20,7 @@ var paths = {
     }
 }
 
-gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
+gulp.task('debug', ['clean', 'vendor', 'scripts', 'html'], function () {
 
     var bowerFiles = gulp.src(mainBowerFiles(), {read: false});
 
@@ -30,8 +31,8 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
         This is necessary as the module needs to execute before any files that use it
         e.g. home.module.js
      */
-    var moduleStream = gulp.src(paths.js.modules);
-    var nonModuleStream = gulp.src(paths.js.nonModules);
+    var moduleStream = gulp.src(paths.js.modules, {read: false});
+    var nonModuleStream = gulp.src(paths.js.nonModules, {read: false});
 
     return gulp.src(paths.html.index)
         /*
@@ -43,7 +44,7 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
             <!-- endinject -->
          */
         .pipe(inject(bowerFiles, {name: 'vendor'}))
-        .pipe(inject(es.merge(moduleStream, nonModuleStream)))
+        .pipe(inject(es.merge(moduleStream, nonModuleStream), {relative: true}))
         .pipe(gulp.dest(paths.build.debug));
 });
 
@@ -78,7 +79,12 @@ gulp.task('vendor', ['clean'], function () {
 
 gulp.task('scripts', ['clean'], function () {
     return gulp.src(paths.js.all)
-        .pipe(gulp.dest(paths.build.debug + 'src'));
+        .pipe(gulp.dest(paths.build.debug));
+});
+
+gulp.task('html', ['clean'], function () {
+    return gulp.src(paths.html.all)
+        .pipe(gulp.dest(paths.build.debug));
 });
 
 gulp.task('default', ['debug']);
