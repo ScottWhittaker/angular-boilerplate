@@ -42,7 +42,7 @@ gulp.task('debug', ['clean', 'vendor', 'scripts'], function () {
             ...
             <!-- endinject -->
          */
-        .pipe(inject(bowerFiles, {name: 'bower'}))
+        .pipe(inject(bowerFiles, {name: 'vendor'}))
         .pipe(inject(es.merge(moduleStream, scriptStream)))
         .pipe(gulp.dest(paths.build.dest));
 });
