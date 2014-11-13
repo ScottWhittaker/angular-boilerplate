@@ -25,7 +25,7 @@ var paths = {
         modules: 'src/**/*.module.js',
         nonModules: 'src/**/!(*.module.js)'
     },
-    less: 'src/less/app.less'
+    less: 'src/less/*.less'
 };
 
 var CSS = 'app.css';
