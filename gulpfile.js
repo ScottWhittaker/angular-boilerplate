@@ -37,7 +37,7 @@ gulp.task('browserSync', function () {
     });
 });
 
-gulp.task('debug', ['vendor', 'scripts', 'templates'], function () {
+gulp.task('debug', function () {
 
     var bowerFiles = gulp.src(mainBowerFiles(), {read: false});
 
@@ -64,7 +64,8 @@ gulp.task('debug', ['vendor', 'scripts', 'templates'], function () {
         .pipe(inject(templates, {name: 'templates', ignorePath: '/build/debug/'}))
         .pipe(inject(bowerFiles, {name: 'vendor'}))
         .pipe(inject(es.merge(moduleStream, nonModuleStream), {relative: true}))
-        .pipe(gulp.dest(paths.build.debug));
+        .pipe(gulp.dest(paths.build.debug))
+        .pipe(browserSync.reload({stream: true}));
 });
 
 
@@ -108,7 +109,7 @@ gulp.task('html', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('templates', function() {
+gulp.task('templates', function () {
     return gulp.src([paths.html.all, '!' + paths.html.index])
         .pipe(html2js({
             outputModuleName: HTML_TEMPLATES,
@@ -122,10 +123,13 @@ gulp.task('templates', function() {
 
 gulp.task('default', function (cb) {
     runSequence('clean',
-        ['debug', 'browserSync'],
+        ['vendor', 'scripts', 'templates', 'browserSync'],
+        'debug',
         cb);
     gulp.watch(paths.js.all, ['scripts']);
-    gulp.watch(paths.html.all, ['templates']);
+    gulp.watch([paths.html.all, '!' + paths.html.index], ['templates']);
+    gulp.watch(paths.html.index, ['debug']);
 });
+
 
 
