@@ -50,6 +50,7 @@ gulp.task('debug', ['vendor', 'scripts', 'templates'], function () {
      */
     var moduleStream = gulp.src(paths.js.modules, {read: false});
     var nonModuleStream = gulp.src(paths.js.nonModules, {read: false});
+    var templates = gulp.src(paths.build.debug + HTML_TEMPLATES + '.js');
 
     return gulp.src(paths.html.index)
         /*
@@ -60,6 +61,7 @@ gulp.task('debug', ['vendor', 'scripts', 'templates'], function () {
             ...
             <!-- endinject -->
          */
+        .pipe(inject(templates, {name: 'templates', ignorePath: '/build/debug/'}))
         .pipe(inject(bowerFiles, {name: 'vendor'}))
         .pipe(inject(es.merge(moduleStream, nonModuleStream), {relative: true}))
         .pipe(gulp.dest(paths.build.debug));
