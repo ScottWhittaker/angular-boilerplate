@@ -50,7 +50,7 @@ gulp.task('debug', function () {
      */
     var moduleStream = gulp.src(paths.js.modules, {read: false});
     var nonModuleStream = gulp.src(paths.js.nonModules, {read: false});
-    var templates = gulp.src(paths.build.debug + HTML_TEMPLATES + '.js');
+    var templates = gulp.src(paths.build.debug + HTML_TEMPLATES + '.js', {read: false});
 
     return gulp.src(paths.html.index)
         /*
