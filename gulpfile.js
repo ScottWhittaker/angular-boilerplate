@@ -105,11 +105,6 @@ gulp.task('js', function () {
 });
 
 gulp.task('html', function () {
-    return gulp.src(paths.html.all)
-        .pipe(gulp.dest(paths.build.debug));
-});
-
-gulp.task('templates', function () {
     return gulp.src([paths.html.all, '!' + paths.html.index])
         .pipe(html2js({
             outputModuleName: HTML_TEMPLATES,
@@ -123,11 +118,11 @@ gulp.task('templates', function () {
 
 gulp.task('default', function (cb) {
     runSequence('clean',
-        ['vendor', 'js', 'templates', 'browserSync'],
+        ['vendor', 'js', 'html', 'browserSync'],
         'debug',
         cb);
     gulp.watch(paths.js.all, ['scripts']);
-    gulp.watch([paths.html.all, '!' + paths.html.index], ['templates']);
+    gulp.watch([paths.html.all, '!' + paths.html.index], ['html']);
     gulp.watch(paths.html.index, ['debug']);
 });
 
