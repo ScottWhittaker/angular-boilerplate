@@ -14,18 +14,18 @@ var runSequence = require('run-sequence');
 
 var paths = {
     build: {
-        debug: './build/debug/'
+        debug: 'build/debug/'
     },
     html: {
-        index: './src/index.html',
-        all: './src/**/*.html'
+        index: 'src/index.html',
+        all: 'src/**/*.html'
     },
     js: {
-        all: './src/**/*.js',
-        modules: './src/**/*.module.js',
-        nonModules: './src/**/!(*.module.js)'
+        all: 'src/**/*.js',
+        modules: 'src/**/*.module.js',
+        nonModules: 'src/**/!(*.module.js)'
     },
-    less: './src/less/app.less'
+    less: 'src/less/app.less'
 };
 
 var CSS = 'app.css';
@@ -65,8 +65,8 @@ gulp.task('debug', function () {
             ...
             <!-- endinject -->
          */
-        .pipe(inject(css, {ignorePath: '/build/debug/'}))
-        .pipe(inject(templates, {name: 'templates', ignorePath: '/build/debug/'}))
+        .pipe(inject(css, {ignorePath: paths.build.debug}))
+        .pipe(inject(templates, {name: 'templates', ignorePath: paths.build.debug}))
         .pipe(inject(bowerFiles, {name: 'vendor'}))
         .pipe(inject(es.merge(moduleStream, nonModuleStream), {relative: true}))
         .pipe(gulp.dest(paths.build.debug))
