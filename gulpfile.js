@@ -97,7 +97,7 @@ gulp.task('vendor', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('scripts', function () {
+gulp.task('js', function () {
     return gulp.src(paths.js.all)
         .pipe(changed(paths.build.debug))
         .pipe(gulp.dest(paths.build.debug))
@@ -123,7 +123,7 @@ gulp.task('templates', function () {
 
 gulp.task('default', function (cb) {
     runSequence('clean',
-        ['vendor', 'scripts', 'templates', 'browserSync'],
+        ['vendor', 'js', 'templates', 'browserSync'],
         'debug',
         cb);
     gulp.watch(paths.js.all, ['scripts']);
