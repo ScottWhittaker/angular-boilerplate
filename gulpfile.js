@@ -1,9 +1,14 @@
+'use strict';
+
 var gulp = require('gulp');
+var browserSync = require('browser-sync');
+var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var del = require('del');
 var es = require('event-stream');
 var inject = require('gulp-inject');
 var mainBowerFiles = require('main-bower-files');
+
 
 var paths = {
     build: {
@@ -18,9 +23,18 @@ var paths = {
         modules: './src/**/*.module.js',
         nonModules: './src/**/!(*.module.js)'
     }
-}
+};
 
-gulp.task('debug', ['clean', 'vendor', 'scripts', 'html'], function () {
+gulp.task('browserSync', function () {
+    return browserSync({
+        server: {
+            baseDir: paths.build.debug
+        },
+        browser: ['google chrome canary']
+    });
+});
+
+gulp.task('debug', ['vendor', 'scripts', 'html'], function () {
 
     var bowerFiles = gulp.src(mainBowerFiles(), {read: false});
 
@@ -53,7 +67,7 @@ gulp.task('clean', function (cb) {
     del([paths.build.debug], cb);
 });
 
-gulp.task('vendor', ['clean'], function () {
+gulp.task('vendor', function () {
     /*
         Note: passing base path as second argument to gulp.src is required.
         See: http://stackoverflow.com/questions/21386940/why-does-gulp-src-not-like-being-passed-an-array-of-complete-paths-to-files
@@ -77,14 +91,20 @@ gulp.task('vendor', ['clean'], function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('scripts', ['clean'], function () {
+gulp.task('scripts', function () {
     return gulp.src(paths.js.all)
-        .pipe(gulp.dest(paths.build.debug));
+        .pipe(changed(paths.build.debug))
+        .pipe(gulp.dest(paths.build.debug))
+        .pipe(browserSync.reload({stream: true}));
 });
 
-gulp.task('html', ['clean'], function () {
+gulp.task('html', function () {
     return gulp.src(paths.html.all)
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('default', ['debug']);
+gulp.task('default', ['debug', 'browserSync'], function () {
+    gulp.watch(paths.js.all, ['scripts']);
+});
+
+
