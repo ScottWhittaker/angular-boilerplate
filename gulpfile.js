@@ -8,6 +8,7 @@ var del = require('del');
 var es = require('event-stream');
 var html2js = require('gulp-html2js');
 var inject = require('gulp-inject');
+var less = require('gulp-less');
 var mainBowerFiles = require('main-bower-files');
 var runSequence = require('run-sequence');
 
@@ -51,6 +52,7 @@ gulp.task('debug', function () {
     var moduleStream = gulp.src(paths.js.modules, {read: false});
     var nonModuleStream = gulp.src(paths.js.nonModules, {read: false});
     var templates = gulp.src(paths.build.debug + HTML_TEMPLATES + '.js', {read: false});
+    var css = gulp.src(paths.build.debug + 'app.css', {read: false});
 
     return gulp.src(paths.html.index)
         /*
@@ -61,6 +63,7 @@ gulp.task('debug', function () {
             ...
             <!-- endinject -->
          */
+        .pipe(inject(css, {ignorePath: '/build/debug/'}))
         .pipe(inject(templates, {name: 'templates', ignorePath: '/build/debug/'}))
         .pipe(inject(bowerFiles, {name: 'vendor'}))
         .pipe(inject(es.merge(moduleStream, nonModuleStream), {relative: true}))
@@ -116,14 +119,22 @@ gulp.task('html', function () {
         .pipe(browserSync.reload({stream: true}));
 });
 
+gulp.task('less', function () {
+    return gulp.src('./src/less/app.less')
+        .pipe(less())
+        .pipe(gulp.dest(paths.build.debug))
+        .pipe(browserSync.reload({stream: true}));
+});
+
 gulp.task('default', function (cb) {
     runSequence('clean',
-        ['vendor', 'js', 'html', 'browserSync'],
+        ['vendor', 'js', 'html', 'less', 'browserSync'],
         'debug',
         cb);
     gulp.watch(paths.js.all, ['scripts']);
     gulp.watch([paths.html.all, '!' + paths.html.index], ['html']);
     gulp.watch(paths.html.index, ['debug']);
+    gulp.watch('./src/less/app.less', ['less']);
 });
 
 
