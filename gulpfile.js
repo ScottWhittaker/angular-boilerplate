@@ -133,7 +133,7 @@ gulp.task('default', function (cb) {
         ['vendor', 'js', 'html', 'less', 'browserSync'],
         'debug',
         cb);
-    gulp.watch(paths.js.all, ['scripts']);
+    gulp.watch(paths.js.all, ['js']);
     gulp.watch([paths.html.all, '!' + paths.html.index], ['html']);
     gulp.watch(paths.html.index, ['debug']);
     gulp.watch(paths.less, ['less']);
