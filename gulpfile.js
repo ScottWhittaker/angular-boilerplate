@@ -24,9 +24,11 @@ var paths = {
         all: './src/**/*.js',
         modules: './src/**/*.module.js',
         nonModules: './src/**/!(*.module.js)'
-    }
+    },
+    less: './src/less/app.less'
 };
 
+var CSS = 'app.css';
 var HTML_TEMPLATES = 'app.html.templates';
 
 gulp.task('browserSync', function () {
@@ -52,7 +54,7 @@ gulp.task('debug', function () {
     var moduleStream = gulp.src(paths.js.modules, {read: false});
     var nonModuleStream = gulp.src(paths.js.nonModules, {read: false});
     var templates = gulp.src(paths.build.debug + HTML_TEMPLATES + '.js', {read: false});
-    var css = gulp.src(paths.build.debug + 'app.css', {read: false});
+    var css = gulp.src(paths.build.debug + CSS, {read: false});
 
     return gulp.src(paths.html.index)
         /*
@@ -120,7 +122,7 @@ gulp.task('html', function () {
 });
 
 gulp.task('less', function () {
-    return gulp.src('./src/less/app.less')
+    return gulp.src(paths.less)
         .pipe(less())
         .pipe(gulp.dest(paths.build.debug))
         .pipe(browserSync.reload({stream: true}));
@@ -134,7 +136,7 @@ gulp.task('default', function (cb) {
     gulp.watch(paths.js.all, ['scripts']);
     gulp.watch([paths.html.all, '!' + paths.html.index], ['html']);
     gulp.watch(paths.html.index, ['debug']);
-    gulp.watch('./src/less/app.less', ['less']);
+    gulp.watch(paths.less, ['less']);
 });
 
 
