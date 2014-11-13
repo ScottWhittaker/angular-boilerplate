@@ -25,7 +25,10 @@ var paths = {
         modules: 'src/**/*.module.js',
         nonModules: 'src/**/!(*.module.js)'
     },
-    less: 'src/less/*.less'
+    less: {
+        src: 'src/less/*.less',
+        output: 'src/less/app.less'
+    }
 };
 
 var CSS = 'app.css';
@@ -122,7 +125,7 @@ gulp.task('html', function () {
 });
 
 gulp.task('less', function () {
-    return gulp.src(paths.less)
+    return gulp.src(paths.less.output)
         .pipe(less())
         .pipe(gulp.dest(paths.build.debug))
         .pipe(browserSync.reload({stream: true}));
@@ -136,7 +139,7 @@ gulp.task('default', function (cb) {
     gulp.watch(paths.js.all, ['js']);
     gulp.watch([paths.html.all, '!' + paths.html.index], ['html']);
     gulp.watch(paths.html.index, ['debug']);
-    gulp.watch(paths.less, ['less']);
+    gulp.watch(paths.less.src, ['less']);
 });
 
 
