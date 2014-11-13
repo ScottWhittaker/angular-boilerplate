@@ -8,7 +8,7 @@ var del = require('del');
 var es = require('event-stream');
 var inject = require('gulp-inject');
 var mainBowerFiles = require('main-bower-files');
-
+var runSequence = require('run-sequence');
 
 var paths = {
     build: {
@@ -103,7 +103,10 @@ gulp.task('html', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('default', ['debug', 'browserSync'], function () {
+gulp.task('default', function (cb) {
+    runSequence('clean',
+        ['debug', 'browserSync'],
+        cb);
     gulp.watch(paths.js.all, ['scripts']);
 });
 
