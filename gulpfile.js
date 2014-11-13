@@ -6,6 +6,7 @@ var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var del = require('del');
 var es = require('event-stream');
+var html2js = require('gulp-html2js');
 var inject = require('gulp-inject');
 var mainBowerFiles = require('main-bower-files');
 var runSequence = require('run-sequence');
@@ -25,6 +26,8 @@ var paths = {
     }
 };
 
+var HTML_TEMPLATES = 'app.html.templates';
+
 gulp.task('browserSync', function () {
     return browserSync({
         server: {
@@ -34,7 +37,7 @@ gulp.task('browserSync', function () {
     });
 });
 
-gulp.task('debug', ['vendor', 'scripts', 'html'], function () {
+gulp.task('debug', ['vendor', 'scripts', 'templates'], function () {
 
     var bowerFiles = gulp.src(mainBowerFiles(), {read: false});
 
@@ -103,11 +106,24 @@ gulp.task('html', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
+gulp.task('templates', function() {
+    return gulp.src([paths.html.all, '!' + paths.html.index])
+        .pipe(html2js({
+            outputModuleName: HTML_TEMPLATES,
+            useStrict: true,
+            base: 'src/app'
+        }))
+        .pipe(concat(HTML_TEMPLATES + '.js'))
+        .pipe(gulp.dest(paths.build.debug))
+        .pipe(browserSync.reload({stream: true}));
+});
+
 gulp.task('default', function (cb) {
     runSequence('clean',
         ['debug', 'browserSync'],
         cb);
     gulp.watch(paths.js.all, ['scripts']);
+    gulp.watch(paths.html.all, ['templates']);
 });
 
 
