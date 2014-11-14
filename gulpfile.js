@@ -12,9 +12,11 @@ var inject = require('gulp-inject');
 var less = require('gulp-less');
 var mainBowerFiles = require('main-bower-files');
 var minifyCSS = require('gulp-minify-css');
+var minifyHTML = require('gulp-minify-html');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
 var uglify = require('gulp-uglify');
+var zip = require('gulp-zip');
 
 // Paths
 // ------------------------------------------------------------------------------------------------
@@ -145,8 +147,26 @@ gulp.task('browserSync', function () {
 // Release
 // ------------------------------------------------------------------------------------------------
 
-gulp.task('release', function () {
+gulp.task('release', function (cb) {
 
+    runSequence('clean-release',
+        ['vendor-release', 'js-release', 'less-release'],
+        'package-release',
+        cb);
+});
+
+gulp.task('package-release', function () {
+    var jsSrc = gulp.src('build/release/app.min.js', {read: false});
+    var vendorSrc = gulp.src('build/release/vendor.min.js', {read: false});
+    var cssSrc = gulp.src('build/release/app.min.css', {read: false});
+
+    return gulp.src(paths.html.index)
+        .pipe(inject(cssSrc, {ignorePath: paths.build.release}))
+        .pipe(inject(vendorSrc, {name: 'vendor', ignorePath: paths.build.release}))
+        .pipe(inject(jsSrc, {ignorePath: paths.build.release}))
+        .pipe(minifyHTML({quotes: true}))
+        //.pipe(zip('app.zip'))
+        .pipe(gulp.dest(paths.build.release));
 });
 
 gulp.task('js-release', function () {
