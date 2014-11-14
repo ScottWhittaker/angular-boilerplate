@@ -11,5 +11,5 @@ Thumbs.db
 *.iml
 node_modules
 bower_components
-debug
+build
 
