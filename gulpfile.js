@@ -6,42 +6,49 @@ var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var del = require('del');
 var es = require('event-stream');
+var flatten = require('gulp-flatten');
 var html2js = require('gulp-html2js');
 var inject = require('gulp-inject');
 var less = require('gulp-less');
 var mainBowerFiles = require('main-bower-files');
+var minifyCSS = require('gulp-minify-css');
+var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
+var uglify = require('gulp-uglify');
+
+// Paths
+// ------------------------------------------------------------------------------------------------
+
+var basePaths = {
+    build: 'build/',
+    src: 'src/'
+}
 
 var paths = {
     build: {
-        debug: 'build/debug/'
+        debug: basePaths.build + 'debug/',
+        release: basePaths.build + 'release/'
     },
     html: {
-        index: 'src/index.html',
-        all: 'src/**/*.html'
+        index: basePaths.src + 'index.html',
+        all: basePaths.src + '**/*.html'
     },
     js: {
-        all: 'src/**/*.js',
-        modules: 'src/**/*.module.js',
-        nonModules: 'src/**/!(*.module.js)'
+        all: basePaths.src + '**/*.js',
+        modules: basePaths.src + '**/*.module.js',
+        nonModules: basePaths.src + '**/!(*.module.js)'
     },
     less: {
-        src: 'src/less/*.less',
-        output: 'src/less/app.less'
+        src: basePaths.src + 'less/*.less',
+        output: basePaths.src + 'less/app.less'
     }
 };
 
 var CSS = 'app.css';
 var HTML_TEMPLATES = 'app.html.templates';
 
-gulp.task('browserSync', function () {
-    return browserSync({
-        server: {
-            baseDir: paths.build.debug
-        },
-        browser: ['google chrome canary']
-    });
-});
+// Debug
+// ------------------------------------------------------------------------------------------------
 
 gulp.task('debug', function () {
 
@@ -76,9 +83,30 @@ gulp.task('debug', function () {
         .pipe(browserSync.reload({stream: true}));
 });
 
+gulp.task('html', function () {
+    return gulp.src([paths.html.all, '!' + paths.html.index])
+        .pipe(html2js({
+            outputModuleName: HTML_TEMPLATES,
+            useStrict: true,
+            base: 'src/app'
+        }))
+        .pipe(concat(HTML_TEMPLATES + '.js'))
+        .pipe(gulp.dest(paths.build.debug))
+        .pipe(browserSync.reload({stream: true}));
+});
 
-gulp.task('clean', function (cb) {
-    del([paths.build.debug], cb);
+gulp.task('js', function () {
+    return gulp.src(paths.js.all)
+        .pipe(changed(paths.build.debug))
+        .pipe(gulp.dest(paths.build.debug))
+        .pipe(browserSync.reload({stream: true}));
+});
+
+gulp.task('less', function () {
+    return gulp.src(paths.less.output)
+        .pipe(less())
+        .pipe(gulp.dest(paths.build.debug))
+        .pipe(browserSync.reload({stream: true}));
 });
 
 gulp.task('vendor', function () {
@@ -105,34 +133,66 @@ gulp.task('vendor', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('js', function () {
+gulp.task('browserSync', function () {
+    return browserSync({
+        server: {
+            baseDir: paths.build.debug
+        },
+        browser: ['google chrome canary']
+    });
+});
+
+// Release
+// ------------------------------------------------------------------------------------------------
+
+gulp.task('release', function () {
+
+});
+
+gulp.task('js-release', function () {
     return gulp.src(paths.js.all)
-        .pipe(changed(paths.build.debug))
-        .pipe(gulp.dest(paths.build.debug))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(concat('app.js'))
+        .pipe(uglify())
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(paths.build.release));
 });
 
-gulp.task('html', function () {
-    return gulp.src([paths.html.all, '!' + paths.html.index])
-        .pipe(html2js({
-            outputModuleName: HTML_TEMPLATES,
-            useStrict: true,
-            base: 'src/app'
-        }))
-        .pipe(concat(HTML_TEMPLATES + '.js'))
-        .pipe(gulp.dest(paths.build.debug))
-        .pipe(browserSync.reload({stream: true}));
-});
-
-gulp.task('less', function () {
+gulp.task('less-release', function () {
     return gulp.src(paths.less.output)
         .pipe(less())
-        .pipe(gulp.dest(paths.build.debug))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(minifyCSS())
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(paths.build.release));
 });
 
+gulp.task('vendor-release', function () {
+    return gulp.src('bower_components/**/*.min.js')
+        .pipe(concat('vendor.js'))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(flatten())
+        .pipe(gulp.dest(paths.build.release));
+});
+
+// Clean
+// ------------------------------------------------------------------------------------------------
+
+gulp.task('clean', function (cb) {
+    del([basePaths.build], cb);
+});
+
+gulp.task('clean-debug', function (cb) {
+    del([paths.build.debug], cb);
+});
+
+gulp.task('clean-release', function (cb) {
+    del([paths.build.release], cb);
+});
+
+// Default
+// ------------------------------------------------------------------------------------------------
+
 gulp.task('default', function (cb) {
-    runSequence('clean',
+    runSequence('clean-debug',
         ['vendor', 'js', 'html', 'less', 'browserSync'],
         'debug',
         cb);
@@ -141,6 +201,3 @@ gulp.task('default', function (cb) {
     gulp.watch(paths.html.index, ['debug']);
     gulp.watch(paths.less.src, ['less']);
 });
-
-
-
