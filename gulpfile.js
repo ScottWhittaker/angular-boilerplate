@@ -82,8 +82,7 @@ gulp.task('debug', function () {
         .pipe(inject(templates, {name: 'templates', ignorePath: paths.build.debug}))
         .pipe(inject(bowerFiles, {name: 'vendor'}))
         .pipe(inject(es.merge(moduleStream, nonModuleStream), {relative: true}))
-        .pipe(gulp.dest(paths.build.debug))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(gulp.dest(paths.build.debug));
 });
 
 gulp.task('html', function () {
@@ -94,22 +93,19 @@ gulp.task('html', function () {
             base: 'src/app'
         }))
         .pipe(concat(HTML_TEMPLATES + '.js'))
-        .pipe(gulp.dest(paths.build.debug))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(gulp.dest(paths.build.debug));
 });
 
 gulp.task('js', function () {
     return gulp.src(paths.js.all)
         .pipe(changed(paths.build.debug))
-        .pipe(gulp.dest(paths.build.debug))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(gulp.dest(paths.build.debug));
 });
 
 gulp.task('less', function () {
     return gulp.src(paths.less.output)
         .pipe(less())
-        .pipe(gulp.dest(paths.build.debug))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(gulp.dest(paths.build.debug));
 });
 
 gulp.task('vendor', function () {
@@ -247,8 +243,8 @@ gulp.task('default', function (cb) {
         ['vendor', 'js', 'html', 'less', 'browserSync'],
         'debug',
         cb);
-    gulp.watch(paths.js.all, ['js']);
-    gulp.watch([paths.html.all, '!' + paths.html.index], ['html']);
-    gulp.watch(paths.html.index, ['debug']);
-    gulp.watch(paths.less.src, ['less']);
+    gulp.watch(paths.js.all, ['js', browserSync.reload]);
+    gulp.watch([paths.html.all, '!' + paths.html.index], ['html', browserSync.reload]);
+    gulp.watch(paths.html.index, ['debug', browserSync.reload]);
+    gulp.watch(paths.less.src, ['less', browserSync.reload]);
 });
