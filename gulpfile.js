@@ -170,7 +170,7 @@ gulp.task('package-release', function () {
 
     var css = gulp.src('build/release/app.min.css', {read: false});
     var js = gulp.src('build/release/app.min.js', {read: false});
-    var templates = gulp.src(paths.build.release + HTML_TEMPLATES + '.js', {read: false});
+    var templates = gulp.src(paths.build.release + HTML_TEMPLATES + '.min.js', {read: false});
     var vendor = gulp.src('build/release/vendor.min.js', {read: false});
 
     return gulp.src(paths.html.index)
@@ -201,6 +201,8 @@ gulp.task('html-release', function () {
             base: 'src/app'
         }))
         .pipe(concat(HTML_TEMPLATES + '.js'))
+        .pipe(uglify())
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(paths.build.release));
 });
 
