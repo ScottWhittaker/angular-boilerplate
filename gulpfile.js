@@ -13,6 +13,7 @@ var less = require('gulp-less');
 var mainBowerFiles = require('main-bower-files');
 var minifyCSS = require('gulp-minify-css');
 var minifyHTML = require('gulp-minify-html');
+var ngAnnotate = require('gulp-ng-annotate');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
 var uglify = require('gulp-uglify');
@@ -144,36 +145,66 @@ gulp.task('browserSync', function () {
     });
 });
 
+gulp.task('browserSyncRelease', function () {
+    return browserSync({
+        server: {
+            baseDir: paths.build.release
+        },
+        browser: ['google chrome canary']
+    });
+});
+
 // Release
 // ------------------------------------------------------------------------------------------------
 
 gulp.task('release', function (cb) {
 
     runSequence('clean-release',
-        ['vendor-release', 'js-release', 'less-release'],
+        ['vendor-release', 'js-release', 'less-release', 'html-release'],
         'package-release',
         cb);
 });
 
+gulp.task('release-serve', function () {
+
+    gulp.run('release', ['browserSyncRelease']);
+});
+
 gulp.task('package-release', function () {
-    var jsSrc = gulp.src('build/release/app.min.js', {read: false});
-    var vendorSrc = gulp.src('build/release/vendor.min.js', {read: false});
-    var cssSrc = gulp.src('build/release/app.min.css', {read: false});
+
+    var css = gulp.src('build/release/app.min.css', {read: false});
+    var js = gulp.src('build/release/app.min.js', {read: false});
+    var templates = gulp.src(paths.build.release + HTML_TEMPLATES + '.js', {read: false});
+    var vendor = gulp.src('build/release/vendor.min.js', {read: false});
 
     return gulp.src(paths.html.index)
-        .pipe(inject(cssSrc, {ignorePath: paths.build.release}))
-        .pipe(inject(vendorSrc, {name: 'vendor', ignorePath: paths.build.release}))
-        .pipe(inject(jsSrc, {ignorePath: paths.build.release}))
-        .pipe(minifyHTML({quotes: true}))
+        .pipe(inject(css, {ignorePath: paths.build.release}))
+        .pipe(inject(js, {ignorePath: paths.build.release}))
+        .pipe(inject(templates, {name: 'templates', ignorePath: paths.build.release}))
+        .pipe(inject(vendor, {name: 'vendor', ignorePath: paths.build.release}))
+        //.pipe(minifyHTML({quotes: true}))
         //.pipe(zip('app.zip'))
         .pipe(gulp.dest(paths.build.release));
 });
 
 gulp.task('js-release', function () {
-    return gulp.src(paths.js.all)
+
+    return gulp.src([paths.js.modules, paths.js.all])
+        .pipe(ngAnnotate())
         .pipe(concat('app.js'))
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(paths.build.release));
+});
+
+gulp.task('html-release', function () {
+    return gulp.src([paths.html.all, '!' + paths.html.index])
+        .pipe(html2js({
+            outputModuleName: HTML_TEMPLATES,
+            useStrict: true,
+            base: 'src/app'
+        }))
+        .pipe(concat(HTML_TEMPLATES + '.js'))
         .pipe(gulp.dest(paths.build.release));
 });
 
