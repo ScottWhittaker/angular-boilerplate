@@ -178,7 +178,7 @@ gulp.task('package-release', function () {
         .pipe(inject(js, {ignorePath: paths.build.release}))
         .pipe(inject(templates, {name: 'templates', ignorePath: paths.build.release}))
         .pipe(inject(vendor, {name: 'vendor', ignorePath: paths.build.release}))
-        //.pipe(minifyHTML({quotes: true}))
+        .pipe(minifyHTML({quotes: true, empty: true}))
         //.pipe(zip('app.zip'))
         .pipe(gulp.dest(paths.build.release));
 });
