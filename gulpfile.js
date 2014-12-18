@@ -225,10 +225,20 @@ gulp.task('vendor-release', function () {
 // Clean
 // ------------------------------------------------------------------------------------------------
 
+/**
+ * @name clean
+ * @description
+ * Delete the build folder and all content
+ */
 gulp.task('clean', function (cb) {
     del([basePaths.build], cb);
 });
 
+/**
+ * @name clean-debug
+ * @description
+ * Delete the debug folder and all content
+ */
 gulp.task('clean-debug', function (cb) {
     del([paths.build.debug], cb);
 });
