@@ -4,4 +4,8 @@ angular.module('app', [
     'app.about',
     'app.html.templates'
 ])
+
+    .config(function ($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.otherwise('home');
+    })
 ;
