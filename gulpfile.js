@@ -228,7 +228,7 @@ gulp.task('vendor-release', function () {
 /**
  * @name clean
  * @description
- * Delete the build folder and all content
+ * Delete the build folder and all content.
  */
 gulp.task('clean', function (cb) {
     del([basePaths.build], cb);
@@ -237,19 +237,26 @@ gulp.task('clean', function (cb) {
 /**
  * @name clean-debug
  * @description
- * Delete the debug folder and all content
+ * Delete the debug folder and all content.
  */
 gulp.task('clean-debug', function (cb) {
     del([paths.build.debug], cb);
 });
 
+/**
+ * @name clean-release
+ * @description
+ * Delete the release folder and all content.
+ */
 gulp.task('clean-release', function (cb) {
     del([paths.build.release], cb);
 });
 
-// Default
-// ------------------------------------------------------------------------------------------------
-
+/**
+ * @name default
+ * @description
+ * The default gulp task creates a debug build, launches it in a browser and watches for changes.
+ */
 gulp.task('default', function (cb) {
     runSequence('clean-debug',
         ['vendor', 'js', 'html', 'less', 'browserSync'],
