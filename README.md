@@ -1,6 +1,6 @@
 # angular-boilerplate
 
-[Angularjs](https://angularjs.org/) boilerplate with [gulp](http://gulpjs.com/) build automation.
+A playground for learning [angular](https://angularjs.org/) and [gulp](http://gulpjs.com/).
 
 ## Install
 
@@ -22,7 +22,7 @@
 
 ### Boilerplate
 
-Existing angular boilerplate applications...
+Existing angular boilerplate references...
 
 - [https://github.com/dickeyxxx/angular-boilerplate](https://github.com/dickeyxxx/angular-boilerplate)
 - [https://github.com/ngbp/ngbp](https://github.com/ngbp/ngbp)
