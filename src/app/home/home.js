@@ -1,4 +1,5 @@
 (function () {
+
     'use strict';
 
     angular
@@ -7,6 +8,8 @@
 
     /* @ngInject */
     function Home() {
-        console.log('home');
+
+        var vm = this;
+        vm.test = 'Home controller';
     }
 })();

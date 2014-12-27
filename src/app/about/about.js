@@ -1,13 +1,15 @@
-
 (function () {
+
     'use strict';
 
     angular
         .module('app.about')
-        .controller('about', about);
+        .controller('About', About);
 
     /* @ngInject */
-    function about() {
-        console.log('about');
+    function About() {
+
+        var vm = this;
+        vm.test = 'About controller';
     }
 })();

@@ -1,4 +1,7 @@
 (function () {
+
+    'use strict';
+
     angular
         .module('app.about')
         /* @ngInject */
@@ -7,7 +10,7 @@
                 .state('about', {
                     url: '/about',
                     templateUrl: 'about/about.html',
-                    controller: 'about'
+                    controller: 'About as vm'
                 })
         })
 })();

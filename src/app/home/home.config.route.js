@@ -1,4 +1,7 @@
 (function () {
+
+    'use strict';
+
     angular
         .module('app.home')
         /* @ngInject */
@@ -7,7 +10,7 @@
                 .state('home', {
                     url: '/home',
                     templateUrl: 'home/home.html',
-                    controller: 'Home'
+                    controller: 'Home as vm'
                 })
         })
 })();
