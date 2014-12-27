@@ -53,10 +53,14 @@ var HTML_TEMPLATES = 'app.html.templates';
 // Debug
 // ------------------------------------------------------------------------------------------------
 
+/**
+ * @name debug
+ * @description
+ * Creates a debug build.
+ */
 gulp.task('debug', function () {
 
     var bowerFiles = gulp.src(mainBowerFiles(), {read: false});
-
     /*
         Inject files from multiple source streams using event-stream merge
         This provides us with script loading order according to our .js file naming conventions
@@ -85,6 +89,11 @@ gulp.task('debug', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
+/**
+ * @name html-debug
+ * @description
+ * Concatenates html templates into a single javascript file and adds each template to the cache.
+ */
 gulp.task('html-debug', function () {
     return gulp.src([paths.html.all, '!' + paths.html.index])
         .pipe(html2js({
@@ -96,18 +105,33 @@ gulp.task('html-debug', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
+/**
+ * @name js-debug
+ * @description
+ * Writes *.js files to the debug directory and watches for changes.
+ */
 gulp.task('js-debug', function () {
     return gulp.src(paths.js.all)
         .pipe(changed(paths.build.debug))
         .pipe(gulp.dest(paths.build.debug));
 });
 
+/**
+ * @name less-debug
+ * @description
+ * Compiles less files and writes to debug directory.
+ */
 gulp.task('less-debug', function () {
     return gulp.src(paths.less.output)
         .pipe(less())
         .pipe(gulp.dest(paths.build.debug));
 });
 
+/**
+ * @name vendor-debug
+ * @description
+ * Writes vendor files to the debug directory.
+ */
 gulp.task('vendor-debug', function () {
     /*
         Note: passing base path as second argument to gulp.src is required.
