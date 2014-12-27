@@ -85,7 +85,7 @@ gulp.task('debug', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('html', function () {
+gulp.task('html-debug', function () {
     return gulp.src([paths.html.all, '!' + paths.html.index])
         .pipe(html2js({
             outputModuleName: HTML_TEMPLATES,
@@ -96,19 +96,19 @@ gulp.task('html', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('js', function () {
+gulp.task('js-debug', function () {
     return gulp.src(paths.js.all)
         .pipe(changed(paths.build.debug))
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('less', function () {
+gulp.task('less-debug', function () {
     return gulp.src(paths.less.output)
         .pipe(less())
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('vendor', function () {
+gulp.task('vendor-debug', function () {
     /*
         Note: passing base path as second argument to gulp.src is required.
         See: http://stackoverflow.com/questions/21386940/why-does-gulp-src-not-like-being-passed-an-array-of-complete-paths-to-files
@@ -132,7 +132,7 @@ gulp.task('vendor', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
-gulp.task('browserSync', function () {
+gulp.task('browser-sync-debug', function () {
     return browserSync({
         server: {
             baseDir: paths.build.debug
@@ -141,7 +141,7 @@ gulp.task('browserSync', function () {
     });
 });
 
-gulp.task('browserSyncRelease', function () {
+gulp.task('browser-sync-release', function () {
     return browserSync({
         server: {
             baseDir: paths.build.release
@@ -163,7 +163,7 @@ gulp.task('release', function (cb) {
 
 gulp.task('release-serve', function () {
 
-    gulp.run('release', ['browserSyncRelease']);
+    gulp.run('release', ['browser-sync-release']);
 });
 
 gulp.task('package-release', function () {
@@ -259,7 +259,7 @@ gulp.task('clean-release', function (cb) {
  */
 gulp.task('default', function (cb) {
     runSequence('clean-debug',
-        ['vendor', 'js', 'html', 'less', 'browserSync'],
+        ['vendor-debug', 'js-debug', 'html-debug', 'less-debug', 'browser-sync-debug'],
         'debug',
         cb);
     gulp.watch(paths.js.all, ['js', browserSync.reload]);
