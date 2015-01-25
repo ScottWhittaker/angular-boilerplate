@@ -19,7 +19,6 @@ var runSequence = require('run-sequence');
 var uglify = require('gulp-uglify');
 var zip = require('gulp-zip');
 
-// Paths
 // ------------------------------------------------------------------------------------------------
 
 var basePaths = {
@@ -51,7 +50,6 @@ var CSS = 'app.css';
 var BROWSERS = ['google chrome canary'];
 var HTML_TEMPLATES = 'app.html.templates';
 
-// Debug
 // ------------------------------------------------------------------------------------------------
 
 /**
@@ -137,7 +135,6 @@ gulp.task('vendor-debug', function () {
     /*
         Note: passing base path as second argument to gulp.src is required.
         See: http://stackoverflow.com/questions/21386940/why-does-gulp-src-not-like-being-passed-an-array-of-complete-paths-to-files
-        This is not intuitive, perhaps find a different approach?
 
         mainBowerFiles() returns the absolute path of bower files e.g.
             /Users/username/project/bower_components/angular/angular.js,
@@ -157,6 +154,9 @@ gulp.task('vendor-debug', function () {
         .pipe(gulp.dest(paths.build.debug));
 });
 
+/**
+ * @name browser-sync-debug
+ */
 gulp.task('browser-sync-debug', function () {
     return browserSync({
         server: {
@@ -166,9 +166,10 @@ gulp.task('browser-sync-debug', function () {
     });
 });
 
-// Release
-// ------------------------------------------------------------------------------------------------
 
+/**
+ * @name release
+ */
 gulp.task('release', function (cb) {
     runSequence('clean-release',
         ['vendor-release', 'js-release', 'less-release', 'html-release'],
@@ -176,10 +177,18 @@ gulp.task('release', function (cb) {
         cb);
 });
 
+/**
+ * @name release-serve
+ * @description
+ * Launches the release build in a browser(s)
+ */
 gulp.task('release-serve', function () {
     gulp.run('release', ['browser-sync-release']);
 });
 
+/**
+ * @name package-release
+ */
 gulp.task('package-release', function () {
 
     var css = gulp.src('build/release/app.min.css', {read: false});
@@ -193,10 +202,13 @@ gulp.task('package-release', function () {
         .pipe(inject(templates, {name: 'templates', ignorePath: paths.build.release}))
         .pipe(inject(vendor, {name: 'vendor', ignorePath: paths.build.release}))
         .pipe(minifyHTML({quotes: true, empty: true}))
-        //.pipe(zip('app.zip'))
+        .pipe(zip('app.zip'))
         .pipe(gulp.dest(paths.build.release));
 });
 
+/**
+ * @name js-release
+ */
 gulp.task('js-release', function () {
     return gulp.src([paths.js.modules, paths.js.all])
         .pipe(ngAnnotate())
@@ -206,6 +218,9 @@ gulp.task('js-release', function () {
         .pipe(gulp.dest(paths.build.release));
 });
 
+/**
+ * @name html-release
+ */
 gulp.task('html-release', function () {
     return gulp.src([paths.html.all, '!' + paths.html.index])
         .pipe(html2js({
@@ -219,6 +234,9 @@ gulp.task('html-release', function () {
         .pipe(gulp.dest(paths.build.release));
 });
 
+/**
+ * @name less-release
+ */
 gulp.task('less-release', function () {
     return gulp.src(paths.less.output)
         .pipe(less())
@@ -227,6 +245,9 @@ gulp.task('less-release', function () {
         .pipe(gulp.dest(paths.build.release));
 });
 
+/**
+ * @name vendor-release
+ */
 gulp.task('vendor-release', function () {
     return gulp.src('bower_components/**/*.min.js')
         .pipe(concat('vendor.js'))
@@ -235,6 +256,9 @@ gulp.task('vendor-release', function () {
         .pipe(gulp.dest(paths.build.release));
 });
 
+/**
+ * @name browser-sync-release
+ */
 gulp.task('browser-sync-release', function () {
     return browserSync({
         server: {
@@ -243,9 +267,6 @@ gulp.task('browser-sync-release', function () {
         browser: BROWSERS
     });
 });
-
-// Clean
-// ------------------------------------------------------------------------------------------------
 
 /**
  * @name clean
