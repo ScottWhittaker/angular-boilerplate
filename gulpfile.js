@@ -25,7 +25,7 @@ var zip = require('gulp-zip');
 var basePaths = {
     build: 'build/',
     src: 'src/'
-}
+};
 
 var paths = {
     build: {
@@ -48,6 +48,7 @@ var paths = {
 };
 
 var CSS = 'app.css';
+var BROWSERS = ['google chrome canary'];
 var HTML_TEMPLATES = 'app.html.templates';
 
 // Debug
@@ -161,16 +162,7 @@ gulp.task('browser-sync-debug', function () {
         server: {
             baseDir: paths.build.debug
         },
-        browser: ['google chrome canary']
-    });
-});
-
-gulp.task('browser-sync-release', function () {
-    return browserSync({
-        server: {
-            baseDir: paths.build.release
-        },
-        browser: ['google chrome canary']
+        browser: BROWSERS
     });
 });
 
@@ -178,7 +170,6 @@ gulp.task('browser-sync-release', function () {
 // ------------------------------------------------------------------------------------------------
 
 gulp.task('release', function (cb) {
-
     runSequence('clean-release',
         ['vendor-release', 'js-release', 'less-release', 'html-release'],
         'package-release',
@@ -186,7 +177,6 @@ gulp.task('release', function (cb) {
 });
 
 gulp.task('release-serve', function () {
-
     gulp.run('release', ['browser-sync-release']);
 });
 
@@ -208,7 +198,6 @@ gulp.task('package-release', function () {
 });
 
 gulp.task('js-release', function () {
-
     return gulp.src([paths.js.modules, paths.js.all])
         .pipe(ngAnnotate())
         .pipe(concat('app.js'))
@@ -244,6 +233,15 @@ gulp.task('vendor-release', function () {
         .pipe(rename({suffix: '.min'}))
         .pipe(flatten())
         .pipe(gulp.dest(paths.build.release));
+});
+
+gulp.task('browser-sync-release', function () {
+    return browserSync({
+        server: {
+            baseDir: paths.build.release
+        },
+        browser: BROWSERS
+    });
 });
 
 // Clean
