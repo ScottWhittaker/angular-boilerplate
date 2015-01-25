@@ -289,5 +289,5 @@ gulp.task('default', function (cb) {
     gulp.watch(paths.js.all, ['js', browserSync.reload]);
     gulp.watch([paths.html.all, '!' + paths.html.index], ['html', browserSync.reload]);
     gulp.watch(paths.html.index, ['debug', browserSync.reload]);
-    gulp.watch(paths.less.src, ['less', browserSync.reload]);
+    gulp.watch(paths.less.src, ['less-debug', browserSync.reload]);
 });
