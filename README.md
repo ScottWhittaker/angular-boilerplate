@@ -6,7 +6,7 @@ A playground for learning [angular](https://angularjs.org/) and [gulp](http://gu
 
 ### Clone the repo
 
-    $ clone git@bitbucket.org:scottwhittaker/angular-boilerplate.git
+    $ git clone https://github.com/ScottWhittaker/angular-boilerplate.git
     $ cd angular-boilerplate
 
 ### Install dependencies
