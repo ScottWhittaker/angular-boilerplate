@@ -10,6 +10,6 @@
     function About() {
 
         var vm = this;
-        vm.test = 'About controller';
+        vm.message = 'Hello from About controller';
     }
 })();

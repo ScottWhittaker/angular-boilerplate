@@ -10,6 +10,6 @@
     function Home() {
 
         var vm = this;
-        vm.test = 'Home controller';
+        vm.message = 'Hello from Home controller';
     }
 })();
