@@ -48,4 +48,6 @@ Great intro [here](https://egghead.io/lessons/unit-testing-introduction-to-karma
 the built in tools in [WebStorm](https://www.jetbrains.com/webstorm/) to run your tests as an alternative to running
 them from the command line.
 
-- E2E
+### E2E
+
+TODO
